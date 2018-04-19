@@ -1,0 +1,46 @@
+{% load datehandler %}
+<article class="post">
+  <div class="post-media"><a href="{% url 'user' user_per.username %}">
+    <img class="img-ajax" src="{{user_per.avatar}}" alt="" style="display: block;"></a>
+  </div>
+  <div class="post-content">
+    <div class="post-head home-post-head"><h1 class="post-title"><a href="{% url 'user' user_per.username %}">{{user_per.username}}</a></h1>
+      <div class="post-meta">• <time class="post-date" datetime="" title="">{{ user_per.posts.count }} posts | {{ user_per.followers.count|add:-1 }} followers | {{ user_per.followeds.count|add:-1 }} followeds</time>
+      </div>
+      <div>
+        {% if user_per.last_seen %}
+            <p><em>Last seen: {% right_date user_per.last_seen %}</em></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <footer class="post-footer clearfix">
+    <div class="pull-left tag-list">
+      <div class="post-meta">
+        <span class="categories-meta fa-wrap">
+            <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}"><i class="fa fa-thumbs-up" id="imuser"></i></a>
+            <span class="tags-meta" id="thumbup_num">{{ user_per.thumbupeds.count }}</span>
+        </span>
+        <span class="fa-wrap">
+            <a href=""><i class="fa fa-thumbs-down"></i></a>
+            <span class="tags-meta">231</span>
+        </span>
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">{{ user_per.username }}</span>
+        </span>
+      </div>
+    </div>
+    <div class="post-permalink">
+      {% if request.user in user_per.followers.all %}
+{#        <a href="{{url_for('unfollow', username = user_per.username)}}" class="btn btn-default">Unfollow</a>#}
+          <button type="button" class="btn btn-warning" name="{{ user_per.username }}" id="follow">Unfollow</button>
+{#          <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}" id="follow" class="btn btn-default">Unfollow</a>#}
+      {% else %}
+{#        <a href="{{url_for('follow', username = user_per.username)}}" class="btn btn-default">Follow</a>#}
+          <button type="button" class="btn btn-success" name="{{ user_per.username }}" id="follow"> Follow </button>
+{#          <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}" id="follow" class="btn btn-default">Follow</a>#}
+      {% endif %}
+    </div>
+  </footer>
+</article>

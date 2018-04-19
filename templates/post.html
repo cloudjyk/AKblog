@@ -1,0 +1,69 @@
+{% load datehandler %}
+<article class="post">
+    <div class="post-media"><a href="{% url 'user' username=post.author.username %}">
+        <img class="img-ajax" src="{{ post.author.avatar }}" alt="" style="display: block;"></a>
+    </div>
+    <div class="post-content">
+        <div class="post-head home-post-head"><h1 class="post-title"><a
+                href="{% url 'user' username=post.author.username %}">{{ post.author.username }}</a></h1>
+            <div class="post-meta">•
+                <time class="post-date" datetime="" title="">{% from_now post.post_time %}</time>
+            </div>
+        </div>
+        <p class="text_ellipsis">{{ post.body }}</p>
+    </div>
+    <footer class="post-footer clearfix">
+        <div class="pull-left tag-list">
+            <div class="post-meta">
+                <span class="fa-wrap">
+                  <i class="fa fa-clock-o"></i>
+                  <span class="date-meta">{% right_date post.post_time %}</span>
+                </span>
+                <span class="fa-wrap">
+                  <a href="javascript:void(0)" onclick="return false;"><i class="fa fa-comment"></i></a>
+                  <span class="tags-meta" id="comment_num">{{ post.comments.count }}</span>
+                </span>
+                <span class="categories-meta fa-wrap">
+                    <a href="javascript:void(0)" onclick="return false;" name="{{ post.id }}"><i class="fa fa-thumbs-up" id="impost"></i></a>
+                    <span class="tags-meta" id="thumbup_num">{{ post.thumbupeds.count }}</span>
+                </span>
+            </div>
+        </div>
+        <div class="post-permalink">
+            {#      {% if g.user.username == post.author.username %}#}
+            {#        <a href="{{url_for('post_del', post_id = post.id)}}" class="btn btn-default">&nbsp;Delete&nbsp;</a>#}
+            {#      {% else %}#}
+            {#        {% if g.user.is_following(post.author) %}#}
+            {#          <a href="{{url_for('unfollow', username = post.author.username)}}" class="btn btn-default">Unfollow</a>#}
+            {#        {% else %}#}
+            {#          <a href="{{url_for('follow', username = post.author.username)}}" class="btn btn-default">Follow</a>#}
+            {#        {% endif %}#}
+            {#      {% endif %}#}
+            {% if request.user.username == post.author.username %}
+                <button type="button" class="btn btn-danger" name="{{ post.id }}" id="delpost">&nbsp;Delete&nbsp;</button>
+                {#                <a href="" class="btn btn-default">&nbsp;Delete&nbsp;</a>#}
+            {% else %}
+                {% if request.user in request.user.followers.all %}
+                    <button type="button" class="btn btn-warning" name="{{ post.author.username }}" id="follow">
+                        Unfollow
+                    </button>
+                    {#                    <a href="javascript:void(0)" onclick="return false;"#}
+                    {#                       class="btn btn-default">Unfollow</a>#}
+                {% else %}
+                    <button type="button" class="btn btn-success" name="{{ post.author.username }}" id="follow">
+                        Follow
+                    </button>
+                    {#                    <a href="javascript:void(0)" onclick="return false;" #}
+                    {#                       class="btn btn-default">Follow</a>#}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="post-permalink" name="comment" style="display: none;">
+            <hr>
+            <textarea name="body" rows="3" required="required"
+                      placeholder="Tell friends your thought~"
+                      style="min-width: 100%; background: rgb(255,255,255); display: inline-block;resize: none;"></textarea>
+            <button type="button" class="btn btn-success btn-sm" name="{{ post.id }}" id="postcomment">Send it</button>
+        </div>
+    </footer>
+</article>

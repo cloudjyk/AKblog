@@ -1,0 +1,369 @@
+{#{% load datehandler %}#}
+<!DOCTYPE html>
+<html>
+<head>
+    {% if title %}
+        <title>{{ title }} - AKblog</title>
+    {% else %}
+        <title>AKblog</title>
+    {% endif %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1">
+    <link rel="icon" href="http://www.91h5.cc/favicon.ico">
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/8.5/styles/monokai_sublime.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/magnific-popup.js/1.0.0/magnific-popup.min.css">
+
+    {#    <link rel="stylesheet" href="/static/css/bootstrap.min.css">#}
+    {#    <link rel="stylesheet" href="/static/css/font-awesome.min.css">#}
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/cropper.min.css">
+    <link rel="stylesheet" href="/static/css/cropper.main.css">
+
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    {#    <script src="/static/js/bootstrap.min.js"></script>#}
+    <script src="/static/js/cropper.min.js"></script>
+    {#    <script src="/static/js/moment.min.js"></script>#}
+    <script src="/static/js/md5.min.js"></script>
+</head>
+
+
+<body>
+{#{% csrf_token %}#}
+<style type="text/css">
+    .text_clip {
+        text-overflow: clip;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 200px;
+        background: #FFFFFF;
+    }
+
+    .text_ellipsis {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 400px;
+        background: #FFFFFF;
+    }
+</style>
+<header class="main-header"
+        style="background-image:url(http://7xpw2b.com1.z0.glb.clouddn.com/hexo-sinppet/img/banner2.jpg)">
+    <div class="main-header-box">
+        <a class="header-avatar" href="{% url 'user' request.user.username %}" title="">
+            <img src="{{ request.user.avatar }}" alt="logo头像">
+        </a>
+        <div class="branding">
+            {#            <a href="{{ url_for('user', username = g.user.username)}}">#}
+            <a href="">
+                {{ request.user.username }}
+        </div>
+    </div>
+</header>
+
+<nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header">
+                    <span class="nav-toggle-button collapsed" data-toggle="collapse" data-target="#main-menu">
+                      <span class="sr-only">Toggle navigation</span>
+                      <i class="fa fa-bars"></i>
+                    </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        <li role="presentation"><a class="brand" href="{% url 'index' %}">AKblog</a></li>
+                        <li id="index" role="presentation"><a href="{% url 'index' %}">Index</a></li>
+                        {% if not request.user.is_authenticated %}
+                            <li role="presentation"><a href="{% url 'login' %}">Login</a></li>
+                            <li role="presentation"><a href="{% url 'register' %}">Register</a></li>
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                            <li id="homepage" role="presentation"><a
+                                    href="{% url 'user' username=request.user.username %}">Homepage</a></li>
+                            <li id="popular" role="presentation"><a href="{% url 'popular' %}">Popular</a></li>
+                            <li role="presentation"><a href="{% url 'logout' %}">Logout</a></li>
+                        {% endif %}
+                        {#                        <li role="presentation"><a class="brand" href="">AKblog</a></li>#}
+                        {#                        <li id="index" role="presentation"><a href="">Index</a></li>#}
+                        {#                        <li role="presentation"><a href="">Login</a></li>#}
+                        {#                        <li role="presentation"><a href="">Register</a></li>#}
+                        {#                        <li id="homepage" role="presentation"><a href="">Homepage</a></li>#}
+                        {#                        <li id="popular" role="presentation"><a href="">Popular</a></li>#}
+                        {#                        <li role="presentation"><a href="">Logout</a></li>#}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<section class="content-wrap">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-8 main-content">
+                {% block content %}{% endblock %}
+            </main>
+
+            <aside class="col-md-4 sidebar">
+
+                <div class="widget">
+                    <h3 class="title">搜索</h3>
+                    <div id="search-form">
+                        <div id="result-mask" class="hide" style="width: 1920px; height: 922px;">
+
+                        </div>
+                        <div class="search-area">
+                            <input id="search-key" type="search" autocomplete="off" placeholder="搜点什么呢?">
+                            <button type="button" class="search-form-submit" id="search-local">搜索</button>
+                        </div>
+                        <div id="result-wrap" class="hide">
+                            <div id="search-result">
+
+                            </div>
+                        </div>
+                        <div class="hide">
+                            <template id="search-tpl">
+                                <div class="item">
+                                    <a href="/{path}" title="{title}">
+                                        <div class="title">{title}
+                                        </div>
+                                        <div class="content">{content}
+                                        </div>
+                                    </a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget notification">
+                    <h3 class="title">网站简介</h3>
+                    <div><p>一个不成熟的微博客网站，欢迎小伙伴们来玩~<br></p>
+                        <hr>
+                        不断更新，谢谢体验！<br>
+                    </div>
+                </div>
+
+                <div class="widget notification">
+                    <h3 class="title">网站公告</h3>
+                    <div><p>UI 全面更新！欢迎使用~<br></p>
+                        <hr>
+                        接受打赏，谢谢老板！<br>
+                    </div>
+                </div>
+                <div class="widget notification">
+                    <h3 class="title">公众号推荐</h3>
+                    <div>
+                        <p>公众号：十月右耳<br />微信号：give_good<br />
+                        </p>
+                        <hr>
+                        相信自求多福，贩卖与众不同！<br>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3 class="title">社交</h3>
+                    <div class="content social">
+                        <a href="//github.com/" rel="external nofollow" title="Github" target="_blank">
+                            <i class="git fa fa-git"></i>
+                        </a>
+                        <a href="mailto:cloudjyk@163.com" rel="external nofollow" title="邮箱" target="_blank">
+                            <i class="envelope-o fa fa-envelope-o"></i>
+                        </a>
+                        <a href="https://mail.qq.com/cgi-bin/loginpage" rel="external nofollow" title="联系QQ"
+                           target="_blank">
+                            <i class="qq fa fa-qq"></i>
+                        </a>
+                        <a href="https://passport.weibo.com/visitor/visitor?entry=miniblog&a=enter&url=https%3A%2F%2Fweibo.com%2F&domain=.weibo.com&ua=php-sso_sdk_client-0.6.23&_rand=1519561365.9492"
+                           rel="external nofollow" title="微博" target="_blank">
+                            <i class="weibo fa fa-weibo"></i>
+                        </a>
+                        <a href="/" rel="external nofollow" title="QQ群" target="_blank">
+                            <i class="users fa fa-users"></i>
+                        </a>
+                        <a href="/atom.xml" rel="external nofollow" title="RSS" target="_blank">
+                            <i class="feed fa fa-feed"></i>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <nav class="pagination" role="navigation">
+        {#        {% if posts %}#}
+        {#            {% if posts.has_prev %}#}
+        {#                <a class="newer-posts" href="{{ url_for('index', page = posts.prev_num) }}"><i#}
+        {#                        class="fa fa-angle-left"></i></a>#}
+        {#            {% endif %}#}
+        {#            <span class="page-number">第 {{ posts.page }} 页 ⁄ 共 {{ posts.pages }} 页</span>#}
+        {#            {% if posts.has_next %}#}
+        {#                <a class="older-posts" href="{{ url_for('index', page = posts.next_num) }}"><i#}
+        {#                        class="fa fa-angle-right"></i></a>#}
+        {#            {% endif %}#}
+        {#        {% endif %}#}
+        {#        {% if userlist %}#}
+        {#            {% if userlist.has_prev %}#}
+        {#                <a class="newer-posts" href="{{ url_for('popular', user = user, page = userlist.prev_num) }}"><i#}
+        {#                        class="fa fa-angle-left"></i></a>#}
+        {#            {% endif %}#}
+        {#            <span class="page-number">第 {{ userlist.page }} 页 ⁄ 共 {{ userlist.pages }} 页</span>#}
+        {#            {% if userlist.has_next %}#}
+        {#                <a class="older-posts" href="{{ url_for('popular', user = user, page = userlist.next_num) }}"><i#}
+        {#                        class="fa fa-angle-right"></i></a>#}
+        {#            {% endif %}#}
+        {#        {% endif %}#}
+    </nav>
+</section>
+
+{# pages #}
+{% if title != 'Edit your profile' %}
+    <div style="text-align: center;display:-webkit-box;
+                     -webkit-box-pack:center;
+                     -webkit-box-align:center;">
+        <ul class="pagination">
+            {# 上一页，这里需要用到has_previous方法判断是否有上一页 #}
+            <li class="previous">
+                {% if title == 'Popular users!' %}
+                    {% if userlist.has_previous %}
+                            <a href="{% url 'popular' userlist.previous_page_number %}" aria-label="Previous">
+                    {% else %}
+                            <a href="{% url 'popular' userlist.number %}" aria-label="Previous">
+                    {% endif %}
+                {% else %}
+                    {% if posts.has_previous %}
+                        {% if title == 'Homepage' %}
+                            <a href="{% url 'user' user.username posts.previous_page_number %}" aria-label="Previous">
+                        {% else %}
+                            <a href="{% url 'index' posts.previous_page_number %}" aria-label="Previous">
+                        {% endif %}
+                    {% else %}
+                        {% if title == 'Homepage' %}
+                            <a href="{% url 'user' user.username posts.number %}" aria-label="Previous">
+                        {% else %}
+                            <a href="{% url 'index' posts.number %}" aria-label="Previous">
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+                <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            {# 遍历所有页码 #}
+            {% if title == 'Popular users!' %}
+                {% for page in users_all.page_range %}
+                    <li>
+                        <a href="{% url 'popular' page %}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                {% for page in posts_all.page_range %}
+                    <li>
+                        {% if title == 'Homepage' %}
+                            <a href="{% url 'user' user.username page %}">{{ page }}</a>
+                        {% else %}
+                            <a href="{% url 'index' page %}">{{ page }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endif %}
+
+            {# 下一页，这里需要用到has_next方法判断是否有下一页 #}
+            <li class="next">
+                {% if title == 'Popular users!' %}
+                    {% if userlist.has_next %}
+                            <a href="{% url 'popular' userlist.next_page_number %}" aria-label="next">
+                    {% else %}
+                            <a href="{% url 'popular' userlist.number %}" aria-label="next">
+                    {% endif %}
+                {% else %}
+                    {% if posts.has_next %}
+                        {% if title == 'Homepage' %}
+                            <a href="{% url 'user' user.username posts.next_page_number %}" aria-label="next">
+                        {% else %}
+                            <a href="{% url 'index' posts.next_page_number %}" aria-label="next">
+                        {% endif %}
+                    {% else %}
+                        {% if title == 'Homepage' %}
+                            <a href="{% url 'user' user.username posts.number %}" aria-label="next">
+                        {% else %}
+                            <a href="{% url 'index' posts.number %}" aria-label="next">
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+                <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+{% endif %}
+{#<div style="text-align: center">#}
+{#    <span class="blog_footer_tip">#}
+{#        共{{ posts_all.count }}篇博文。当前第{{ posts.number }}页，共{{ posts_all.num_pages }}页#}
+{#    </span>#}
+{#</div>#}
+
+{% block extra_footer %}
+    {#设置凸显当前的页码#}
+    <script type="text/javascript">
+        $(function () {
+            if ((location.pathname.startsWith('/popular')))
+                $(".pagination li:eq({{ userlist.number }})").addClass("active");
+            else
+                $(".pagination li:eq({{ posts.number }})").addClass("active");
+        });
+    </script>
+{% endblock %}
+
+
+
+
+<div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Copyright © 2017</span> | <span>Powered by <a href="mail.163.com" class="copyright-links"
+                                                                    target="_blank" rel="nofollow">Cloudjyk</a></span> |
+                <span>Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links"
+                                  target="_blank" rel="nofollow">N.J</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var _gauges = _gauges || [];
+    (function () {
+        var t = document.createElement('script');
+        t.type = 'text/javascript';
+        t.async = true;
+        t.id = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4f0dc9fef5a1f55508000013');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+    })();
+</script>
+<script type="text/javascript">
+    $(function () {
+        if (location.pathname.startsWith('/ind')) {
+            $('#index').addClass('nav-current');
+        }
+        if (location.pathname.startsWith('/user')) {
+            $('#homepage').addClass('nav-current');
+        }
+        if (location.pathname.startsWith('/popular')) {
+            $('#popular').addClass('nav-current');
+        }
+    });
+</script>
+
+</body>
+</html>

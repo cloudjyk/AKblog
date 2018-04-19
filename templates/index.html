@@ -1,0 +1,321 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% block content %}
+
+    <article class="post">
+        {#  <div class="post-media"><a href="{{url_for('user', username = user.username)}}">#}
+        <div class="post-media"><a href="">
+            <img class="img-ajax" src="{{ request.user.avatar }}" alt="" style="display: block;"></a>
+        </div>
+        <div class="post-content">
+            <div class="post-head home-post-head"><h1 class="post-title"><a
+                    href="{% url 'user' request.user.username %}">{{ request.user.username }}</a></h1>
+                <div class="post-meta">•
+                    <time class="post-date" datetime="" title="">
+                        <span id="post_num">{{ user.posts.count }}</span>posts | <span
+                            name="followers">{{ user.followers.count|add:-1 }}</span>followers | <span
+                            name="followeds">{{ user.followeds.count|add:-1 }}</span>followeds
+                    </time>
+                </div>
+            </div>
+
+            <form class="form-horizontal" action="" method="post" name="post" id="form1">
+                {% csrf_token %}
+                <div class="control-group">
+                    <div>
+                        <textarea id="body" name="body" rows="4" autofocus="autofocus" required="required"
+                                  placeholder="Tell friends what's new~"
+                                  style="min-width: 70%; background:#eff0ff;"></textarea>
+                        <br/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="post-footer clearfix">
+            <div class="pull-left tag-list">
+                <div class="post-meta">
+                    <p class="text_ellipsis"><strong>Signature: </strong>{{ request.user.about_me }}</p>
+                    {#                    <span class="categories-meta fa-wrap">#}
+                    {#                        <i class="fa fa-folder-open-o"></i>#}
+                    {#                        <span>Cool~</span>#}
+                    {#                    </span>#}
+                    {#                    <span class="fa-wrap">#}
+                    {#                        <i class="fa fa-tags"></i>#}
+                    {#                        <span class="tags-meta"> {{ request.user.username }} </span>#}
+                    {#                    </span>#}
+                    {#                    <span class="fa-wrap">#}
+                    {#                        <i class="fa fa-clock-o"></i>#}
+                    {#                        <span class="date-meta">{{ request.user.username }}</span>#}
+                    {#                    </span>#}
+                </div>
+            </div>
+            <div class="post-permalink">
+                <input class="btn btn-primary" form="form1" type="submit" value="Post it to your friends!">
+            </div>
+        </footer>
+    </article>
+
+
+    {% for post in posts %}
+        {% include 'post.html' %}
+    {% endfor %}
+
+
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            // ========follow/unfollow========
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            };
+            <!--获取csrftoken-->
+            var csrftoken = getCookie('csrftoken');
+            console.log(csrftoken);
+            //Ajax call
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            };
+            $('button#follow').click(function (e) {
+                var target = e.target;
+                console.log(target.innerText);
+                username = target.name;
+                var data = {
+                    "username": username,
+                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                if (target.innerText == "Follow") {
+                    $.ajax({
+                        url: "http://localhost:8080/follow/",
+                        // Access-Control-Allow-Origin: "http://192.168.151.249",
+                        // referer: "http://localhost:8080/",
+                        // "X-CSRFToken": "{{ csrf_token }}",
+                        type: "post",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        data: JSON.stringify(data),
+                        // data: data,
+                        success: function (data, textStatus) {
+                            alert(`You have followed ${username}`);
+                            n = data.Data;
+                            $('span[name=followeds]').text(n);
+                            $(target).attr('class', 'btn btn-warning').text("Unfollow")
+                            // console.log(2, textStatus);
+                            // console.log(data);
+                            // console.log(data.Meta.RetCode)
+                            // console.log(data.Data);
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            // console.log(XMLHttpRequest);
+                            alert('Some error has occured, try again later');
+                            // console.log(XMLHttpRequest.status);
+                            // console.log(textStatus);
+                            // console.log(errorThrown);
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: "http://localhost:8080/unfollow/",
+                        type: "post",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        data: JSON.stringify(data),
+                        success: function (data) {
+                            alert(`You have unfollowed ${username}`);
+                            n = data.Data;
+                            $('span[name=followeds]').text(n);
+                            $(target).attr('class', 'btn btn-success').text("Follow");
+                        },
+                        error: function () {
+                            alert('Some error has occured, try again later');
+                        }
+                    });
+                }
+
+                // $('ul[name=a1] li[name=open]').attr('name','close').text('close')
+            });
+
+            // ========comment(fadein/fadeout)========
+            $('i.fa.fa-comment').click(function (e) {
+                var target = e.target;
+                var comment = $(target).parent().parent().parent().parent().parent().find('.post-permalink[name=comment]');
+                if (comment.attr('style') == "display: none;")
+                    comment.slideDown();
+                else
+                    comment.slideUp();
+            });
+            // ========delete_post========
+            $('button#delpost').click(function (e) {
+                var target = e.target;
+                var postid = target.name;
+                var post_num = $('span#post_num');
+                var current_post = $(target).parent().parent().parent();
+                var data = {
+                    "postid": postid
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/del_post/",
+                    type: "delete",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    success: function (data, textStatus) {
+                        alert('Post deleted!');
+                        var n = data.Data;
+                        post_num.text(n);
+                        current_post.slideUp();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Some error has occured, try again later');
+                    }
+                });
+            });
+            // ========post_comment========
+            $('button#postcomment').click(function (e) {
+                var target = e.target;
+                var postid = target.name;
+                var body = $(target).parent().find('textarea').val();
+                var comment = $(target).parent();
+                var data = {
+                    "postid": postid,
+                    "comment": body,
+                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/post_comment/",
+                    // Access-Control-Allow-Origin: "http://192.168.151.249",
+                    // referer: "http://localhost:8080/",
+                    // "X-CSRFToken": "{{ csrf_token }}",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    // data: data,
+                    success: function (data, textStatus) {
+                        alert('Comment posted!');
+                        $(target).parent().find('textarea').val("");
+                        var n = data.Data;
+                        $(target).parent().parent().find('span#comment_num').text(n);
+                        comment.slideUp();
+                        // console.log(2, textStatus);
+                        // console.log(data);
+                        // console.log(data.Meta.RetCode)
+                        // console.log(data.Data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // console.log(XMLHttpRequest);
+                        alert('Some error has occured, try again later');
+                        comment.slideDown();
+                        // console.log(XMLHttpRequest.status);
+                        // console.log(textStatus);
+                        // console.log(errorThrown);
+                    }
+                });
+            });
+            // ========thumbup========
+            $('i.fa.fa-thumbs-up').click(function (e) {
+                var target = e.target;
+                var data = {};
+                if (target.id == "imuser") {
+                    var username = $(target).parent().attr('name');
+                    data = {
+                        "username": username
+                    };
+                }
+                else {
+                    var postid = $(target).parent().attr('name');
+                    data = {
+                        "postid": postid
+                    };
+                }
+                var num = $(target).parent().parent().find('#thumbup_num');
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/thumbup/",
+                    // Access-Control-Allow-Origin: "http://192.168.151.249",
+                    // referer: "http://localhost:8080/",
+                    // "X-CSRFToken": "{{ csrf_token }}",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    // data: data,
+                    success: function (data, textStatus) {
+                        alert('Thumbup recieved!');
+                        var n = data.Data;
+                        num.text(n);
+                        // console.log(2, textStatus);
+                        // console.log(data);
+                        // console.log(data.Meta.RetCode)
+                        // console.log(data.Data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // console.log(XMLHttpRequest);
+                        alert('Some error has occured, try again later');
+                        // console.log(XMLHttpRequest.status);
+                        // console.log(textStatus);
+                        // console.log(errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+{% endblock %}

@@ -1,0 +1,351 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    {% load datehandler %}
+    <article class="post">
+        <div class="post-media"><a href="{% url 'user' user.username %}">
+            <img class="img-ajax" src="{{ user.avatar }}" alt="" style="display: block;"></a>
+        </div>
+        <div class="post-content">
+            <div class="post-head home-post-head"><h1 class="post-title"><a
+                    href="{% url 'user' user.username %}">{{ user.username }}</a></h1>
+                <div class="post-meta">
+                    <time class="post-date" datetime="" title="">
+                        <p>
+                            • <span  id="post_num">{{ user.posts.count }}</span>posts | <span
+                                name="followers">{{ user.followers.count|add:-1 }}</span>followers | <span
+                                name="followeds">{{ user.followeds.count|add:-1 }}</span>followeds
+                        </p>
+
+                    </time>
+                </div>
+            </div>
+            {% if user.last_seen %}
+                <p><em>Last seen: {% right_date user.last_seen %}</em></p>
+            {% endif %}
+
+        </div>
+        <footer class="post-footer clearfix">
+            <div class="pull-left tag-list">
+                <div class="post-meta">
+                    <span class="categories-meta fa-wrap">
+{#            <span style="cursor:pointer" onclick="jsFun()"><i class="fa fa-thumbs-up"></i></span>#}
+                        <a href="javascript:void(0)" onclick="return false;" name="{{ user.username }}"><i class="fa fa-thumbs-up" id="imuser"></i></a>
+                        <span class="tags-meta" id="thumbup_num">{{ user.thumbupeds.count }}</span>
+                    </span>
+                    <span class="fa-wrap">
+                        <a href="javascript:void(0)" onclick="return false;" name="thumbup"><i class="fa fa-thumbs-down"></i></a>
+                        <span class="tags-meta">225</span>
+                    </span>
+                    <span class="fa-wrap">
+                        <i class="fa fa-clock-o"></i>
+                        <span class="date-meta">{{ user.username }}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="post-permalink">
+                {% if request.user.username == user.username %}
+                    <a href="{% url 'edit' %}" class="btn btn-default">edit my info</a>
+                {% else %}
+                    {% if request.user in user.followers.all %}
+                        <a class="btn btn-default" name="follow">Unfollow</a>
+                        {#                        <a href="{{ url_for('unfollow', username = user.username)}}"#}
+                        {#                           class="btn btn-default">Unfollow</a>#}
+                    {% else %}
+                        <a class="btn btn-default" name="follow">Follow</a>
+                        {#                        <a href="{{ url_for('follow', username = user.username)}}" class="btn btn-default">Follow</a>#}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </footer>
+    </article>
+
+    <script type="text/javascript">
+        $(function () {
+            // ========thumbup========
+{#            $('a[name=thumbup]').click(function (e) {#}
+{#                console.log(e.target);#}
+{#                console.log(e.currentTarget);#}
+{#                var ct = $(e.currentTarget);#}
+{#                console.log(ct);#}
+{#                console.log(ct.find('i').attr('class'));#}
+{#                var pt = $(ct.parent());#}
+{#                console.log(pt);#}
+{#                var n = parseInt(pt.find('.tags-meta').text());#}
+{#                pt.find('.tags-meta').text(n + 1);#}
+{#                console.log(pt.find('.tags-meta').text());#}
+{#            });#}
+            // ========getcookies========
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            };
+            <!--获取csrftoken-->
+            var csrftoken = getCookie('csrftoken');
+            console.log(csrftoken);
+            //Ajax call
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            };
+            $('button#follow').click(function (e) {
+                var target = e.target;
+                console.log(target.innerText);
+                username = target.name;
+                var data = {
+                    "username": username,
+                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                if (target.innerText == "Follow") {
+                    $.ajax({
+                        url: "http://localhost:8080/follow/",
+                        // Access-Control-Allow-Origin: "http://192.168.151.249",
+                        // referer: "http://localhost:8080/",
+                        // "X-CSRFToken": "{{ csrf_token }}",
+                        type: "post",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        data: JSON.stringify(data),
+                        // data: data,
+                        success: function (data, textStatus) {
+                            alert(`You have followed ${username}`);
+                            n = data.Data;
+                            $('span[name=followeds]').text(n);
+                            $(target).attr('class', 'btn btn-warning').text("Unfollow")
+                            // console.log(2, textStatus);
+                            // console.log(data);
+                            // console.log(data.Meta.RetCode)
+                            // console.log(data.Data);
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            // console.log(XMLHttpRequest);
+                            alert('Some error has occured, try again later');
+                            // console.log(XMLHttpRequest.status);
+                            // console.log(textStatus);
+                            // console.log(errorThrown);
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: "http://localhost:8080/unfollow/",
+                        type: "post",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        data: JSON.stringify(data),
+                        success: function (data) {
+                            alert(`You have unfollowed ${username}`);
+                            n = data.Data;
+                            $('span[name=followeds]').text(n);
+                            $(target).attr('class', 'btn btn-success').text("Follow");
+                        },
+                        error: function () {
+                            alert('Some error has occured, try again later');
+                        }
+                    });
+                }
+
+                // $('ul[name=a1] li[name=open]').attr('name','close').text('close')
+            });
+            // ========delete_post========
+            $('button#delpost').click(function (e) {
+                var target = e.target;
+                var postid = target.name;
+                var post_num = $('span#post_num');
+                var current_post = $(target).parent().parent().parent();
+                var data = {
+                    "postid": postid
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/del_post/",
+                    type: "delete",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    success: function (data, textStatus) {
+                        alert('Post deleted!');
+                        var n = data.Data;
+                        post_num.text(n);
+                        current_post.slideUp();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Some error has occured, try again later');
+                    }
+                });
+            });
+            // ========comment========
+            $('i.fa.fa-comment').click(function (e) {
+                var target = e.target;
+                postid = target.name;
+                var comment = $(target).parent().parent().parent().parent().parent().find('.post-permalink[name=comment]');
+                if (comment.attr('style')== "display: none;")
+                    comment.slideDown();
+                else
+                    comment.slideUp();
+            });
+            // ========post_comment========
+            $('button#postcomment').click(function (e) {
+                var target = e.target;
+                var postid = target.name;
+                var body = $(target).parent().find('textarea').val();
+                var comment = $(target).parent();
+                var data = {
+                    "postid": postid,
+                    "comment": body,
+                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
+                };
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/post_comment/",
+                    // Access-Control-Allow-Origin: "http://192.168.151.249",
+                    // referer: "http://localhost:8080/",
+                    // "X-CSRFToken": "{{ csrf_token }}",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    // data: data,
+                    success: function (data, textStatus) {
+                        alert('Comment posted!');
+                        $(target).parent().find('textarea').val("");
+                        var n = data.Data;
+                        $(target).parent().parent().find('span#comment_num').text(n);
+                        comment.slideUp();
+                        // console.log(2, textStatus);
+                        // console.log(data);
+                        // console.log(data.Meta.RetCode)
+                        // console.log(data.Data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // console.log(XMLHttpRequest);
+                        alert('Some error has occured, try again later');
+                        comment.slideDown();
+                        // console.log(XMLHttpRequest.status);
+                        // console.log(textStatus);
+                        // console.log(errorThrown);
+                    }
+                });
+            });
+            // ========thumbup========
+            $('i.fa.fa-thumbs-up').click(function (e) {
+                var target = e.target;
+                var data = {};
+                if (target.id == "imuser") {
+                    var postid = $(target).parent().attr('name');
+                    data = {
+                        "username": postid
+                    };
+                }
+                else {
+                    var username = $(target).parent().attr('name');
+                    data = {
+                        "postid": username
+                    };
+                }
+                var num = $(target).parent().parent().find('#thumbup_num');
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    //请求前触发
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://localhost:8080/thumbup/",
+                    // Access-Control-Allow-Origin: "http://192.168.151.249",
+                    // referer: "http://localhost:8080/",
+                    // "X-CSRFToken": "{{ csrf_token }}",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(data),
+                    // data: data,
+                    success: function (data, textStatus) {
+                        alert('Thumbup recieved!');
+                        var n = data.Data;
+                        num.text(n);
+                        // console.log(2, textStatus);
+                        // console.log(data);
+                        // console.log(data.Meta.RetCode)
+                        // console.log(data.Data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // console.log(XMLHttpRequest);
+                        alert('Some error has occured, try again later');
+                        // console.log(XMLHttpRequest.status);
+                        // console.log(textStatus);
+                        // console.log(errorThrown);
+                    }
+                });
+            });
+        });
+
+{#        $(function () {#}
+{#            $('a[name=follow]').click(function (e) {#}
+{#                console.log(e.target);#}
+{#                console.log(e.currentTarget);#}
+{#                var ct = $(e.currentTarget);#}
+{#                console.log(ct);#}
+{#                console.log(ct.find('i').attr('class'));#}
+{#                var pt = $(ct.parent());#}
+{#                console.log(pt);#}
+{#                var n = parseInt(pt.find('.tags-meta').text());#}
+{#                pt.find('.tags-meta').text(n + 1);#}
+{#                console.log(pt.find('.tags-meta').text());#}
+{#            });#}
+{#        });#}
+
+
+    </script>
+
+
+
+    {% for post in posts %}
+        {% include 'post.html' %}
+    {% endfor %}
+{% endblock %}

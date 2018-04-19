@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Join AKblog</title>1
+    {% endif %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link crossorigin="anonymous" media="all"
+          integrity="sha512-KDZfnHRZjn4xEe2VuPe5iA8c+O1aNoowrYTe3DQQR97UQDzf5HZ15My/ytImCLmX5X6kBM8kwtuUVj5H+DOZbA=="
+          rel="stylesheet" href="https://assets-cdn.github.com/assets/frameworks-7d09971c51977b60c6626362003ef38a.css">
+    <link crossorigin="anonymous" media="all"
+          integrity="sha512-8VnmS7+S4UIxsIz2BC4F/c3YYbRNB/GEcCQ6AssRT3F3s6sObMSaw8K9ijW0SyurkWRxN/dPT/DV/+4GjWcFrA=="
+          rel="stylesheet" href="https://assets-cdn.github.com/assets/github-324331281b788158086ad9201d9c0804.css">
+    <link crossorigin="anonymous" media="all"
+          integrity="sha512-VxZgLPiRT4wMogNRwy9qVO15+ta9te/mxcvjePEjWO2b2X0gEhyzdPUdn+4AHiRMvxhOPuh5U2UA1DLmOXcKBQ=="
+          rel="stylesheet" href="https://assets-cdn.github.com/assets/site-83dc1f7ebc9c7461fe1eab799b56c4c4.css">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/md5.min.js"></script>
+</head>
+
+<body class="logged-out env-production page-responsive min-width-0 session-authentication">
+<div class="position-relative js-header-wrapper ">
+    <a href="#start-of-content" tabindex="1" class="px-2 py-4 show-on-focus js-skip-to-content">Skip to content</a>
+    <div id="js-pjax-loader-bar" class="pjax-loader-bar">
+        <div class="progress"></div>
+    </div>
+    <div class="header header-logged-out width-full pt-5 pb-4" role="banner">
+        <div class="container clearfix width-full text-center">
+            <a class="header-logo" href="/" aria-label="Homepage"
+               data-ga-click="(Logged out) Header, go to homepage, icon:logo-wordmark">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="40" width="45">
+                    <path id="lineAB" d="M 5 35 l 15 -30" stroke="black" stroke-width="1" fill="none"/>
+                    <path id="lineBC" d="M 20 5 l 15 30" stroke="black" stroke-width="1" fill="none"/>
+                    <path d="M 5 35 q 15 -30 30 0" stroke="black" stroke-width="1" fill="none"/>
+                    <!-- Mark relevant points -->
+                    <g stroke="black" stroke-width="3" fill="black">
+                        <circle id="pointA" cx="5" cy="35" r="1"/>
+                        <circle id="pointB" cx="20" cy="5" r="1"/>
+                        <circle id="pointC" cx="35" cy="35" r="1"/>
+                    </g>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="start-of-content" class="show-on-focus"></div>
+<div role="main" class="application-main ">
+    <div id="js-pjax-container" data-pjax-container="">
+        <div class="auth-form px-3" id="login">
+            <form class="form" action="" method="post" name="register" accept-charset="UTF-8">
+                {% csrf_token %}
+                <input name="utf8" type="hidden" value="✓">
+                {#                <input type="hidden" name="authenticity_token"#}
+                {#                       value="z4anVsSJAoXwH2R3TfeQ0soC1GJlTm9gRjcuJ6t0Uce0mK1MGc4S/Xcbrcw5y3/BpN5BiCstda2tuTnkBmmelA==">#}
+                <div class="auth-form-header p-0">
+                    <h1>Join AKblog</h1>
+                </div>
+                <div id="js-flash-container">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.success %}
+                                <div class="flash flash-full flash-success">
+                                    <div class="container">
+                                        <button class="flash-close js-flash-close" type="button"
+                                                aria-label="Dismiss this message">
+                                            <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12"
+                                                 height="16"
+                                                 aria-hidden="true">
+                                                <path fill-rule="evenodd"
+                                                      d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"></path>
+                                            </svg>
+                                        </button>
+                                        {{ message }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                                <div class="flash flash-full flash-error">
+                                    <div class="container">
+                                        <button class="flash-close js-flash-close" type="button"
+                                                aria-label="Dismiss this message">
+                                            <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12"
+                                                 height="16"
+                                                 aria-hidden="true">
+                                                <path fill-rule="evenodd"
+                                                      d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"></path>
+                                            </svg>
+                                        </button>
+                                        {{ message }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {#                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}#}
+                            {#                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
+                        {% endfor %}
+
+                    {% endif %}
+                </div>
+                <div class="auth-form-body mt-3">
+                    <label for="login_field">
+                        Username:
+                    </label>
+                    <input type="text" name="username" id="username" placeholder="Pick a username"
+                           class="form-control input-block" tabindex="1"
+                           autocapitalize="off" autocorrect="off" autofocus="autofocus" required="required">
+                    <label for="login_field">
+                        Email address:
+                    </label>
+                    <input type="email" name="email" id="email" placeholder="me@example.com"
+                           class="form-control form-control input-block"
+                           tabindex="2" required="required">
+                    <label for="login_field">
+                        Password:
+                    </label>
+                    <input type="password" name="password" id="password" placeholder="Your password"
+                           class="form-control form-control input-block"
+                           tabindex="2" required="required">
+                    <label for="login_field">
+                        Password again:
+                    </label>
+                    <input type="password" name="password2" id="password2" placeholder="Your password again"
+                           class="form-control form-control input-block"
+                           tabindex="2" required="required">
+                    <input type="submit" name="submit" id="sub" value="Register now" tabindex="3"
+                           class="btn btn-primary btn-block"
+                           data-disable-with="Registering…">
+                </div>
+            </form>
+            <p class="create-account-callout mt-3">
+                Old frined?
+                <a data-ga-click="Sign in here"
+                   href="/login">Sign in here!</a>.
+            </p>
+        </div>
+
+    </div>
+    <div class="modal-backdrop js-touch-events"></div>
+</div>
+{#<div class="footer container-lg p-responsive py-6 mt-6 f6" role="contentinfo">#}
+{#    <ul class="list-style-none d-flex flex-justify-center">#}
+{#        <li class="mr-3"><a href="/site/terms" data-ga-click="Footer, go to terms, text:terms">Terms</a></li>#}
+{#        <li class="mr-3"><a href="/site/privacy" data-ga-click="Footer, go to privacy, text:privacy">Privacy</a></li>#}
+{#        <li class="mr-3"><a href="https://help.github.com/articles/github-security/"#}
+{#                            data-ga-click="Footer, go to security, text:security">Security</a></li>#}
+{#        <li><a class="link-gray" data-ga-click="Footer, go to contact, text:contact" href="https://github.com/contact">Contact#}
+{#            GitHub</a></li>#}
+{#    </ul>#}
+{#</div>#}
+<script>
+    $(function () {
+        $("#sub").click(function () {
+            var pwd = $("input[name='password']").val();
+            var pwd2 = $("input[name='password2']").val();
+            if (pwd != pwd2) {
+                alert("两次密码不一致!");
+                $("input[name='password']").val("");
+                $("input[name='password2']").val("");
+                return false;
+            }
+            else {
+                {#                alert(md5("dwadad"));#}
+                $("input[name='password']").val(md5($("input[name='password']").val()));
+                $("input[name='password2']").val(md5($("input[name='password2']").val()));
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('button.flash-close').click(function(){
+            $('#js-flash-container').slideUp();
+        });
+});
+</script>
+</body>
+</html>
+
+
