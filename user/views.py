@@ -1,10 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib import auth, messages
 from django.db.models import Count
 from django.core.paginator import Paginator
 from .models import User, Post, Comment
-from .forms import RegForm, LoginForm, PostForm
+from .forms import RegForm, LoginForm, PostForm, EditForm
 import os, json
 from PIL import Image
 from datetime import datetime
@@ -33,7 +34,7 @@ def index(request, page=1):
     posts = Paginator(posts, 3)
     context['posts_all'] = posts
     context['posts'] = posts.page(page)
-    print(dir(context['posts']))
+    # print(dir(context['posts']))
     return render(request, 'index.html', context)
 
 
@@ -123,51 +124,51 @@ def edit(request):
     context['title'] = 'Edit your profile'
     if request.user.is_authenticated:
         guser = User.objects.get(username = request.user.username)
-        # auth.logout(request)
-        # print(request.user.password)
-        # auth.logout(request)
-        # print(BASE_DIR)
-        # avatar_dir = os.path.join(BASE_DIR, 'static', 'avatars')
-        # print(avatar_dir)
-        if request.FILES.get('avatar_file'):
-            # 本地上传
-            avatar_file = request.FILES.get('avatar_file')
-            avatar_dir = os.path.join(BASE_DIR, 'static', 'avatars')
-            temp_file = os.path.join(avatar_dir,'temp')
-            avatar_filename = os.path.join(avatar_dir,guser.username + os.path.splitext(avatar_file.name)[-1])
-            print(avatar_filename)
-            # 保存上传的文件
-            with open(temp_file, 'wb') as f:
-                for chunk in avatar_file.chunks():
-                    f.write(chunk)
-            # 裁剪图片
-            top = int(float(request.POST.get('avatar_y')))
-            height = int(float(request.POST.get('avatar_height')))
-            buttom = top + height
-            left = int(float(request.POST.get('avatar_x')))
-            width = int(float(request.POST.get('avatar_width')))
-            right = left + width
+        if request.POST:
+            form = EditForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                about_me = form.cleaned_data['about_me']
+                guser.about_me = username
+                guser.about_me = about_me
+                guser.save()
+            if request.FILES.get('avatar_file'):
+                # 本地上传
+                avatar_file = request.FILES.get('avatar_file')
+                avatar_dir = os.path.join(BASE_DIR, 'static', 'avatars')
+                temp_file = os.path.join(avatar_dir,'temp')
+                # avatar_filename = os.path.join(avatar_dir,guser.username + os.path.splitext(avatar_file.name)[-1])
+                avatar_filename = os.path.join(avatar_dir,guser.username + '.png')
+                # print(avatar_filename)
+                # 保存上传的文件
+                with open(temp_file, 'wb') as f:
+                    for chunk in avatar_file.chunks():
+                        f.write(chunk)
+                # 裁剪图片
+                top = int(float(request.POST.get('avatar_y')))
+                height = int(float(request.POST.get('avatar_height')))
+                buttom = top + height
+                left = int(float(request.POST.get('avatar_x')))
+                width = int(float(request.POST.get('avatar_width')))
+                right = left + width
 
-            # python2.7 pillow
+                im = Image.open(temp_file)
+                # 裁剪图片
+                crop_im = im.convert("RGBA").crop((left, top, right, buttom)).resize((width, width), Image.ANTIALIAS)
 
-            im = Image.open(temp_file)
-            # 裁剪图片
-            crop_im = im.convert("RGBA").crop((left, top, right, buttom)).resize((width, width), Image.ANTIALIAS)
+                # 设置背景颜色为白色
+                out = Image.new('RGBA', crop_im.size, (255, 255, 255))
+                out.paste(crop_im, (0, 0, width, width), crop_im)
 
-            # 设置背景颜色为白色
-            out = Image.new('RGBA', crop_im.size, (255, 255, 255))
-            out.paste(crop_im, (0, 0, width, width), crop_im)
-
-            # 保存图片
-            out.save(avatar_filename)
-            os.remove(temp_file)
-            guser.avatar = avatar_filename.replace(BASE_DIR,'').replace('\\','/')
-            guser.save()
-        return render(request, 'edit.html', context)
-
-
-
-    # context['message'] = 'You have to login first'
+                # 保存图片
+                out.save(avatar_filename)
+                os.remove(temp_file)
+                guser.avatar = avatar_filename.replace(BASE_DIR,'').replace('\\','/')
+                guser.save()
+        else:
+            form = EditForm()
+            context['form'] = form
+            return render(request, 'edit.html', context)
     return HttpResponseRedirect('/login')
 
 def logout(request):
@@ -186,11 +187,12 @@ def popular(request, page=1):
     context['userlist'] = userlist.page(page)
     return render(request, 'popular.html', context)
 
+# @csrf_exempt
 def follow(request):
     req = json.loads(request.body.decode('utf-8'))
     # req = {}
     # req['username'] = request.POST.get('username')
-    print('========', req)
+    # print('========', req)
     info = {}
     if req.get('username'):
         if User.objects.filter(username=req['username']):
@@ -210,11 +212,12 @@ def follow(request):
         info['Data'] = []
     return JsonResponse(info)
 
+# @csrf_exempt
 def unfollow(request):
     req = json.loads(request.body.decode('utf-8'))
     # req = {}
     # req['username'] = request.POST.get('username')
-    print('========', req)
+    # print('========', req)
     info = {}
     if req.get('username'):
         if User.objects.filter(username=req['username']):
@@ -234,6 +237,7 @@ def unfollow(request):
         info['Data'] = []
     return JsonResponse(info)
 
+# @csrf_exempt
 def thumbup(request):
     req = json.loads(request.body.decode('utf-8'))
     # req = {}
@@ -243,7 +247,8 @@ def thumbup(request):
     if req.get('username'):
         if User.objects.filter(username=req['username']):
             user = User.objects.filter(username=req['username'])[0]
-            user.thumbupeds.add(request.user)
+            guser = User.objects.get(username=request.user.username)
+            user.thumbupeds.add(guser)
             user.save()
             res = user.thumbupeds.count()
             info['Meta'] = {'RetCode':200, 'Error':''}
@@ -255,7 +260,9 @@ def thumbup(request):
     elif req.get('postid'):
         if Post.objects.filter(id=int(req['postid'])):
             post = Post.objects.filter(id=int(req['postid']))[0]
-            post.thumbupeds.add(request.user)
+            print(request.user)
+            guser = User.objects.get(username=request.user.username)
+            post.thumbupeds.add(guser)
             post.save()
             res = post.thumbupeds.count()
             info['Meta'] = {'RetCode':200, 'Error':''}
@@ -270,11 +277,12 @@ def thumbup(request):
         info['Data'] = []
     return JsonResponse(info)
 
+# @csrf_exempt
 def post_comment(request):
     req = json.loads(request.body.decode('utf-8'))
     # req = {}
     # req['username'] = request.POST.get('username')
-    print('========', req)
+    # print('========', req)
     info = {}
     if req.get('postid') and req.get('comment'):
         if Post.objects.filter(id=int(req['postid'])):
@@ -295,11 +303,12 @@ def post_comment(request):
         info['Data'] = []
     return JsonResponse(info)
 
+# @csrf_exempt
 def del_post(request):
     req = json.loads(request.body.decode('utf-8'))
     # req = {}
     # req['username'] = request.POST.get('username')
-    print('========', req)
+    # print('========', req)
     info = {}
     if req.get('postid'):
         if Post.objects.filter(id=int(req['postid'])):

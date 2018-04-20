@@ -32,5 +32,9 @@ class RegForm(forms.Form):
         if re.match(r'^[a-zA-Z0-9]{1,20}$', self.cleaned_data['username']):
             return True
 
+class EditForm(forms.Form):
+    username = forms.CharField(widget=forms.TextInput)
+    about_me = forms.CharField(widget=forms.TextInput)
+
 class PostForm(forms.Form):
     body = forms.CharField(widget=forms.TextInput,  required=True, help_text='What a nice day!', error_messages={'required': 'Tell friends what\'s new!'})

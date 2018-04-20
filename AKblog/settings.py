@@ -25,7 +25,7 @@ SECRET_KEY = '467l1@oj^1+de%9(-h1yu9100&0helyl98#6$e(z743%4*q&m!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost',]
+ALLOWED_HOSTS = ['cloudjyk.me', 'www.cloudjyk.me', '172.96.208.66']
 
 
 # Application definition
@@ -38,9 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user',
+    'mymiddleware',
 ]
 
 MIDDLEWARE = [
+    'mymiddleware.header.MyMiddle',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',  # 或者使用 mysql.connector.django
         'NAME': 'akblog',
         'USER': 'root',
-        'PASSWORD': '1989422',
+        'PASSWORD': 'Neil@123456',
         'HOST':'localhost',
         'PORT':'13306',
     }

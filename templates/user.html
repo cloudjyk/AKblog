@@ -119,9 +119,9 @@
                 });
                 if (target.innerText == "Follow") {
                     $.ajax({
-                        url: "http://localhost:8080/follow/",
+                        url: window.location.origin + "/follow/",
                         // Access-Control-Allow-Origin: "http://192.168.151.249",
-                        // referer: "http://localhost:8080/",
+                        // referer: "http://172.96.208.66/",
                         // "X-CSRFToken": "{{ csrf_token }}",
                         type: "post",
                         contentType: "application/json; charset=utf-8",
@@ -150,7 +150,7 @@
                 }
                 else {
                     $.ajax({
-                        url: "http://localhost:8080/unfollow/",
+                        url: window.location.origin + "/unfollow/",
                         type: "post",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -189,7 +189,7 @@
                     }
                 });
                 $.ajax({
-                    url: "http://localhost:8080/del_post/",
+                    url: window.location.origin + "/del_post/",
                     type: "delete",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -237,9 +237,9 @@
                     }
                 });
                 $.ajax({
-                    url: "http://localhost:8080/post_comment/",
+                    url: window.location.origin + "/post_comment/",
                     // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://localhost:8080/",
+                    // referer: "http://172.96.208.66/",
                     // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
@@ -295,9 +295,9 @@
                     }
                 });
                 $.ajax({
-                    url: "http://localhost:8080/thumbup/",
+                    url: window.location.origin + "/thumbup/",
                     // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://localhost:8080/",
+                    // referer: "http://172.96.208.66/",
                     // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
