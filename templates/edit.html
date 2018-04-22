@@ -9,7 +9,6 @@
                 <form id="avatar_form" class="form-horizontal" action="" method="post" name="post"
                       enctype="multipart/form-data">
                     {% csrf_token %}
-{#                    <input type="hidden" name="csrfmiddlewaretoken" value="j0GFJPPrM3RHjnY6FHD7EEHRj17snYm8">#}
                     <!--操作区域-->
                     <div class="avatar-wrapper" id="avatar-wrapper">
                         <img src="blob:http://yshblog.com/bd753fce-5b29-4ed6-8ea4-aaf8434131d3" class="cropper-hidden">
@@ -104,9 +103,6 @@
                     </div>
                     <div class="col-lg-1"></div>
                     <div>
-{#                    <div class="col-lg-12">#}
-{#                        <a id="avatar-upload" href="#" class="btn btn-danger btn-large btn-block">上传头像</a>#}
-{#                    </div>#}
                     <div>
                         <div class="col-lg-6">
                             <button class="btn btn-success btn-large btn-block" type="submit" value="Save changes!">
@@ -140,8 +136,6 @@
                 autoCropArea: 1,    //自动裁剪的比例
                 preview: $(".avatar-preview").selector, //文本的jQuery选择表达式，一个div
                 crop: function (e) {
-{#                    alert(e.x)#}
-{#                    alert(e.detail.x)#}
                     $('#avatar_x').val(e.x);
                     $('#avatar_y').val(e.y);
                     $('#avatar_width').val(e.width);

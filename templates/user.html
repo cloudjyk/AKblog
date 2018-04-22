@@ -30,7 +30,6 @@
             <div class="pull-left tag-list">
                 <div class="post-meta">
                     <span class="categories-meta fa-wrap">
-{#            <span style="cursor:pointer" onclick="jsFun()"><i class="fa fa-thumbs-up"></i></span>#}
                         <a href="javascript:void(0)" onclick="return false;" name="{{ user.username }}"><i class="fa fa-thumbs-up" id="imuser"></i></a>
                         <span class="tags-meta" id="thumbup_num">{{ user.thumbupeds.count }}</span>
                     </span>
@@ -50,11 +49,8 @@
                 {% else %}
                     {% if request.user in user.followers.all %}
                         <a class="btn btn-default" name="follow">Unfollow</a>
-                        {#                        <a href="{{ url_for('unfollow', username = user.username)}}"#}
-                        {#                           class="btn btn-default">Unfollow</a>#}
                     {% else %}
                         <a class="btn btn-default" name="follow">Follow</a>
-                        {#                        <a href="{{ url_for('follow', username = user.username)}}" class="btn btn-default">Follow</a>#}
                     {% endif %}
                 {% endif %}
             </div>
@@ -63,19 +59,6 @@
 
     <script type="text/javascript">
         $(function () {
-            // ========thumbup========
-{#            $('a[name=thumbup]').click(function (e) {#}
-{#                console.log(e.target);#}
-{#                console.log(e.currentTarget);#}
-{#                var ct = $(e.currentTarget);#}
-{#                console.log(ct);#}
-{#                console.log(ct.find('i').attr('class'));#}
-{#                var pt = $(ct.parent());#}
-{#                console.log(pt);#}
-{#                var n = parseInt(pt.find('.tags-meta').text());#}
-{#                pt.find('.tags-meta').text(n + 1);#}
-{#                console.log(pt.find('.tags-meta').text());#}
-{#            });#}
             // ========getcookies========
             function getCookie(name) {
                 var cookieValue = null;
@@ -106,7 +89,6 @@
                 username = target.name;
                 var data = {
                     "username": username,
-                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -120,31 +102,19 @@
                 if (target.innerText == "Follow") {
                     $.ajax({
                         url: window.location.origin + "/follow/",
-                        // Access-Control-Allow-Origin: "http://192.168.151.249",
-                        // referer: "http://172.96.208.66/",
-                        // "X-CSRFToken": "{{ csrf_token }}",
                         type: "post",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         async: false,
                         data: JSON.stringify(data),
-                        // data: data,
                         success: function (data, textStatus) {
                             alert(`You have followed ${username}`);
                             n = data.Data;
                             $('span[name=followeds]').text(n);
                             $(target).attr('class', 'btn btn-warning').text("Unfollow")
-                            // console.log(2, textStatus);
-                            // console.log(data);
-                            // console.log(data.Meta.RetCode)
-                            // console.log(data.Data);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            // console.log(XMLHttpRequest);
                             alert('Some error has occured, try again later');
-                            // console.log(XMLHttpRequest.status);
-                            // console.log(textStatus);
-                            // console.log(errorThrown);
                         }
                     });
                 }
@@ -167,8 +137,6 @@
                         }
                     });
                 }
-
-                // $('ul[name=a1] li[name=open]').attr('name','close').text('close')
             });
             // ========delete_post========
             $('button#delpost').click(function (e) {
@@ -225,7 +193,6 @@
                 var data = {
                     "postid": postid,
                     "comment": body,
-                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -238,33 +205,21 @@
                 });
                 $.ajax({
                     url: window.location.origin + "/post_comment/",
-                    // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://172.96.208.66/",
-                    // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: false,
                     data: JSON.stringify(data),
-                    // data: data,
                     success: function (data, textStatus) {
                         alert('Comment posted!');
                         $(target).parent().find('textarea').val("");
                         var n = data.Data;
                         $(target).parent().parent().find('span#comment_num').text(n);
                         comment.slideUp();
-                        // console.log(2, textStatus);
-                        // console.log(data);
-                        // console.log(data.Meta.RetCode)
-                        // console.log(data.Data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // console.log(XMLHttpRequest);
                         alert('Some error has occured, try again later');
                         comment.slideDown();
-                        // console.log(XMLHttpRequest.status);
-                        // console.log(textStatus);
-                        // console.log(errorThrown);
                     }
                 });
             });
@@ -296,55 +251,23 @@
                 });
                 $.ajax({
                     url: window.location.origin + "/thumbup/",
-                    // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://172.96.208.66/",
-                    // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: false,
                     data: JSON.stringify(data),
-                    // data: data,
                     success: function (data, textStatus) {
                         alert('Thumbup recieved!');
                         var n = data.Data;
                         num.text(n);
-                        // console.log(2, textStatus);
-                        // console.log(data);
-                        // console.log(data.Meta.RetCode)
-                        // console.log(data.Data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // console.log(XMLHttpRequest);
                         alert('Some error has occured, try again later');
-                        // console.log(XMLHttpRequest.status);
-                        // console.log(textStatus);
-                        // console.log(errorThrown);
                     }
                 });
             });
         });
-
-{#        $(function () {#}
-{#            $('a[name=follow]').click(function (e) {#}
-{#                console.log(e.target);#}
-{#                console.log(e.currentTarget);#}
-{#                var ct = $(e.currentTarget);#}
-{#                console.log(ct);#}
-{#                console.log(ct.find('i').attr('class'));#}
-{#                var pt = $(ct.parent());#}
-{#                console.log(pt);#}
-{#                var n = parseInt(pt.find('.tags-meta').text());#}
-{#                pt.find('.tags-meta').text(n + 1);#}
-{#                console.log(pt.find('.tags-meta').text());#}
-{#            });#}
-{#        });#}
-
-
     </script>
-
-
-
     {% for post in posts %}
         {% include 'post.html' %}
     {% endfor %}

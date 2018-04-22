@@ -1,4 +1,3 @@
-{#{% load datehandler %}#}
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,22 +15,18 @@
     <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/8.5/styles/monokai_sublime.min.css">
     <link rel="stylesheet" href="https://cdn.bootcss.com/magnific-popup.js/1.0.0/magnific-popup.min.css">
 
-    {#    <link rel="stylesheet" href="/static/css/bootstrap.min.css">#}
-    {#    <link rel="stylesheet" href="/static/css/font-awesome.min.css">#}
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/cropper.min.css">
     <link rel="stylesheet" href="/static/css/cropper.main.css">
 
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    {#    <script src="/static/js/bootstrap.min.js"></script>#}
     <script src="/static/js/cropper.min.js"></script>
-    {#    <script src="/static/js/moment.min.js"></script>#}
     <script src="/static/js/md5.min.js"></script>
 </head>
 
 
 <body>
-{#{% csrf_token %}#}
 <style type="text/css">
     .text_clip {
         text-overflow: clip;
@@ -56,7 +51,6 @@
             <img src="{{ request.user.avatar }}" alt="logo头像">
         </a>
         <div class="branding">
-            {#            <a href="{{ url_for('user', username = g.user.username)}}">#}
             <a href="">
                 {{ request.user.username }}
         </div>
@@ -87,13 +81,6 @@
                             <li id="popular" role="presentation"><a href="{% url 'popular' %}">Popular</a></li>
                             <li role="presentation"><a href="{% url 'logout' %}">Logout</a></li>
                         {% endif %}
-                        {#                        <li role="presentation"><a class="brand" href="">AKblog</a></li>#}
-                        {#                        <li id="index" role="presentation"><a href="">Index</a></li>#}
-                        {#                        <li role="presentation"><a href="">Login</a></li>#}
-                        {#                        <li role="presentation"><a href="">Register</a></li>#}
-                        {#                        <li id="homepage" role="presentation"><a href="">Homepage</a></li>#}
-                        {#                        <li id="popular" role="presentation"><a href="">Popular</a></li>#}
-                        {#                        <li role="presentation"><a href="">Logout</a></li>#}
                     </ul>
                 </div>
             </div>
@@ -196,28 +183,6 @@
     </div>
 
     <nav class="pagination" role="navigation">
-        {#        {% if posts %}#}
-        {#            {% if posts.has_prev %}#}
-        {#                <a class="newer-posts" href="{{ url_for('index', page = posts.prev_num) }}"><i#}
-        {#                        class="fa fa-angle-left"></i></a>#}
-        {#            {% endif %}#}
-        {#            <span class="page-number">第 {{ posts.page }} 页 ⁄ 共 {{ posts.pages }} 页</span>#}
-        {#            {% if posts.has_next %}#}
-        {#                <a class="older-posts" href="{{ url_for('index', page = posts.next_num) }}"><i#}
-        {#                        class="fa fa-angle-right"></i></a>#}
-        {#            {% endif %}#}
-        {#        {% endif %}#}
-        {#        {% if userlist %}#}
-        {#            {% if userlist.has_prev %}#}
-        {#                <a class="newer-posts" href="{{ url_for('popular', user = user, page = userlist.prev_num) }}"><i#}
-        {#                        class="fa fa-angle-left"></i></a>#}
-        {#            {% endif %}#}
-        {#            <span class="page-number">第 {{ userlist.page }} 页 ⁄ 共 {{ userlist.pages }} 页</span>#}
-        {#            {% if userlist.has_next %}#}
-        {#                <a class="older-posts" href="{{ url_for('popular', user = user, page = userlist.next_num) }}"><i#}
-        {#                        class="fa fa-angle-right"></i></a>#}
-        {#            {% endif %}#}
-        {#        {% endif %}#}
     </nav>
 </section>
 
@@ -321,9 +286,6 @@
     </script>
 {% endblock %}
 
-
-
-
 <div class="copyright">
     <div class="container">
         <div class="row">
@@ -364,6 +326,5 @@
         }
     });
 </script>
-
 </body>
 </html>

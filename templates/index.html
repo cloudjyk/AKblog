@@ -3,7 +3,6 @@
 {% block content %}
 
     <article class="post">
-        {#  <div class="post-media"><a href="{{url_for('user', username = user.username)}}">#}
         <div class="post-media"><a href="">
             <img class="img-ajax" src="{{ request.user.avatar }}" alt="" style="display: block;"></a>
         </div>
@@ -35,18 +34,6 @@
             <div class="pull-left tag-list">
                 <div class="post-meta">
                     <p class="text_ellipsis"><strong>Signature: </strong>{{ request.user.about_me }}</p>
-                    {#                    <span class="categories-meta fa-wrap">#}
-                    {#                        <i class="fa fa-folder-open-o"></i>#}
-                    {#                        <span>Cool~</span>#}
-                    {#                    </span>#}
-                    {#                    <span class="fa-wrap">#}
-                    {#                        <i class="fa fa-tags"></i>#}
-                    {#                        <span class="tags-meta"> {{ request.user.username }} </span>#}
-                    {#                    </span>#}
-                    {#                    <span class="fa-wrap">#}
-                    {#                        <i class="fa fa-clock-o"></i>#}
-                    {#                        <span class="date-meta">{{ request.user.username }}</span>#}
-                    {#                    </span>#}
                 </div>
             </div>
             <div class="post-permalink">
@@ -96,7 +83,6 @@
                 username = target.name;
                 var data = {
                     "username": username,
-                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -110,31 +96,19 @@
                 if (target.innerText == "Follow") {
                     $.ajax({
                         url: window.location.origin + "/follow/",
-                        // Access-Control-Allow-Origin: "http://192.168.151.249",
-                        // referer: "http://www.cloudjyk.me/",
-                        // "X-CSRFToken": "{{ csrf_token }}",
                         type: "post",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         async: false,
                         data: JSON.stringify(data),
-                        // data: data,
                         success: function (data, textStatus) {
                             alert(`You have followed ${username}`);
                             n = data.Data;
                             $('span[name=followeds]').text(n);
                             $(target).attr('class', 'btn btn-warning').text("Unfollow")
-                            // console.log(2, textStatus);
-                            // console.log(data);
-                            // console.log(data.Meta.RetCode)
-                            // console.log(data.Data);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            // console.log(XMLHttpRequest);
                             alert('Some error has occured, try again later');
-                            // console.log(XMLHttpRequest.status);
-                            // console.log(textStatus);
-                            // console.log(errorThrown);
                         }
                     });
                 }
@@ -157,8 +131,6 @@
                         }
                     });
                 }
-
-                // $('ul[name=a1] li[name=open]').attr('name','close').text('close')
             });
 
             // ========comment(fadein/fadeout)========
@@ -228,9 +200,6 @@
                 });
                 $.ajax({
                     url: window.location.origin + "/post_comment/",
-                    // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://www.cloudjyk.me/",
-                    // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -243,18 +212,10 @@
                         var n = data.Data;
                         $(target).parent().parent().find('span#comment_num').text(n);
                         comment.slideUp();
-                        // console.log(2, textStatus);
-                        // console.log(data);
-                        // console.log(data.Meta.RetCode)
-                        // console.log(data.Data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // console.log(XMLHttpRequest);
                         alert('Some error has occured, try again later');
                         comment.slideDown();
-                        // console.log(XMLHttpRequest.status);
-                        // console.log(textStatus);
-                        // console.log(errorThrown);
                     }
                 });
             });
@@ -286,9 +247,6 @@
                 });
                 $.ajax({
                     url: window.location.origin + "/thumbup/",
-                    "Access-Control-Allow-Origin": "http://www.cloudjyk.me",
-                    // referer: "http://www.cloudjyk.me/",
-                    // "X-CSRFToken": "{{ csrf_token }}",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -299,17 +257,9 @@
                         alert('Thumbup recieved!');
                         var n = data.Data;
                         num.text(n);
-                        // console.log(2, textStatus);
-                        // console.log(data);
-                        // console.log(data.Meta.RetCode)
-                        // console.log(data.Data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // console.log(XMLHttpRequest);
                         alert('Some error has occured, try again later');
-                        // console.log(XMLHttpRequest.status);
-                        // console.log(textStatus);
-                        // console.log(errorThrown);
                     }
                 });
             });

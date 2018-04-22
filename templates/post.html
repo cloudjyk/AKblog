@@ -30,31 +30,17 @@
             </div>
         </div>
         <div class="post-permalink">
-            {#      {% if g.user.username == post.author.username %}#}
-            {#        <a href="{{url_for('post_del', post_id = post.id)}}" class="btn btn-default">&nbsp;Delete&nbsp;</a>#}
-            {#      {% else %}#}
-            {#        {% if g.user.is_following(post.author) %}#}
-            {#          <a href="{{url_for('unfollow', username = post.author.username)}}" class="btn btn-default">Unfollow</a>#}
-            {#        {% else %}#}
-            {#          <a href="{{url_for('follow', username = post.author.username)}}" class="btn btn-default">Follow</a>#}
-            {#        {% endif %}#}
-            {#      {% endif %}#}
             {% if request.user.username == post.author.username %}
                 <button type="button" class="btn btn-danger" name="{{ post.id }}" id="delpost">&nbsp;Delete&nbsp;</button>
-                {#                <a href="" class="btn btn-default">&nbsp;Delete&nbsp;</a>#}
             {% else %}
                 {% if request.user in request.user.followers.all %}
                     <button type="button" class="btn btn-warning" name="{{ post.author.username }}" id="follow">
                         Unfollow
                     </button>
-                    {#                    <a href="javascript:void(0)" onclick="return false;"#}
-                    {#                       class="btn btn-default">Unfollow</a>#}
                 {% else %}
                     <button type="button" class="btn btn-success" name="{{ post.author.username }}" id="follow">
                         Follow
                     </button>
-                    {#                    <a href="javascript:void(0)" onclick="return false;" #}
-                    {#                       class="btn btn-default">Follow</a>#}
                 {% endif %}
             {% endif %}
         </div>

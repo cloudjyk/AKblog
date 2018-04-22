@@ -33,13 +33,9 @@
     </div>
     <div class="post-permalink">
       {% if request.user in user_per.followers.all %}
-{#        <a href="{{url_for('unfollow', username = user_per.username)}}" class="btn btn-default">Unfollow</a>#}
           <button type="button" class="btn btn-warning" name="{{ user_per.username }}" id="follow">Unfollow</button>
-{#          <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}" id="follow" class="btn btn-default">Unfollow</a>#}
       {% else %}
-{#        <a href="{{url_for('follow', username = user_per.username)}}" class="btn btn-default">Follow</a>#}
           <button type="button" class="btn btn-success" name="{{ user_per.username }}" id="follow"> Follow </button>
-{#          <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}" id="follow" class="btn btn-default">Follow</a>#}
       {% endif %}
     </div>
   </footer>

@@ -24,6 +24,7 @@ def index(request, page=1):
         form = PostForm(request.POST)
         if form.is_valid():
             body = form.cleaned_data['body']
+            print(body)
             post_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             post = Post(body=body, post_time=post_time, author=request.user)
             post.save()

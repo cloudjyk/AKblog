@@ -54,8 +54,6 @@
             <form class="form" action="" method="post" name="register" accept-charset="UTF-8">
                 {% csrf_token %}
                 <input name="utf8" type="hidden" value="✓">
-                {#                <input type="hidden" name="authenticity_token"#}
-                {#                       value="z4anVsSJAoXwH2R3TfeQ0soC1GJlTm9gRjcuJ6t0Uce0mK1MGc4S/Xcbrcw5y3/BpN5BiCstda2tuTnkBmmelA==">#}
                 <div class="auth-form-header p-0">
                     <h1>Join AKblog</h1>
                 </div>
@@ -94,8 +92,6 @@
                                     </div>
                                 </div>
                             {% endif %}
-                            {#                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}#}
-                            {#                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
                         {% endfor %}
 
                     {% endif %}
