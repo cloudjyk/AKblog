@@ -1,5 +1,5 @@
 {% load datehandler %}
-<article class="post">
+<article class="post" style="opacity: 0.9;">
     <div class="post-media"><a href="{% url 'user' username=post.author.username %}">
         <img class="img-ajax" src="{{ post.author.avatar }}" alt="" style="display: block;"></a>
     </div>
@@ -20,11 +20,11 @@
                   <span class="date-meta">{% right_date post.post_time %}</span>
                 </span>
                 <span class="fa-wrap">
-                  <a href="javascript:void(0)" onclick="return false;"><i class="fa fa-comment"></i></a>
+                  <a href="javascript:void(0)" onclick="return false;" title="评论"><i class="fa fa-comment"></i></a>
                   <span class="tags-meta" id="comment_num">{{ post.comments.count }}</span>
                 </span>
                 <span class="categories-meta fa-wrap">
-                    <a href="javascript:void(0)" onclick="return false;" name="{{ post.id }}"><i class="fa fa-thumbs-up" id="impost"></i></a>
+                    <a href="javascript:void(0)" onclick="return false;" name="{{ post.id }}" title="点赞"><i class="fa fa-thumbs-up" id="impost"></i></a>
                     <span class="tags-meta" id="thumbup_num">{{ post.thumbupeds.count }}</span>
                 </span>
             </div>
@@ -33,18 +33,36 @@
             {% if request.user.username == post.author.username %}
                 <button type="button" class="btn btn-danger" name="{{ post.id }}" id="delpost">&nbsp;Delete&nbsp;</button>
             {% else %}
-                {% if request.user in request.user.followers.all %}
-                    <button type="button" class="btn btn-warning" name="{{ post.author.username }}" id="follow">
-                        Unfollow
-                    </button>
+                {% if title == 'Indexpage' %}
+                    {% if request.user in request.user.followers.all %}
+                        <button type="button" class="btn btn-warning" name="{{ post.author.username }}" id="follow">
+                            Unfollow
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-success" name="{{ post.author.username }}" id="follow">
+                            Follow
+                        </button>
+                    {% endif %}
                 {% else %}
-                    <button type="button" class="btn btn-success" name="{{ post.author.username }}" id="follow">
-                        Follow
-                    </button>
+                    <br />
                 {% endif %}
             {% endif %}
         </div>
         <div class="post-permalink" name="comment" style="display: none;">
+            <hr>
+            {% for comment in post.comments.all %}
+                <div class="post-meta" style="text-align:left;">•
+                    <a href="{% url 'user' username=comment.author.username %}" style="font-size: 120%"><i>{{ comment.author.username }}</i></a>
+                    <i>commented </i>
+                    <time class="post-date" datetime="" title="" style="font-family: Didot, serif;color: #006dcc;font-size: 80%;">{% from_now comment.comment_time %}</time>
+                    :
+                    <span class="text_ellipsis">
+                    {{ comment.body }}
+                    </span>
+                </div>
+
+{#                {% include 'post.html' %}#}
+            {% endfor %}
             <hr>
             <textarea name="body" rows="3" required="required"
                       placeholder="Tell friends your thought~"

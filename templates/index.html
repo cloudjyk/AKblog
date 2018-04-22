@@ -33,7 +33,7 @@
         <footer class="post-footer clearfix">
             <div class="pull-left tag-list">
                 <div class="post-meta">
-                    <p class="text_ellipsis"><strong>Signature: </strong>{{ request.user.about_me }}</p>
+                    <p class="text_ellipsis"><strong>Signature: </strong><em>{{ request.user.about_me }}</em></p>
                 </div>
             </div>
             <div class="post-permalink">
@@ -71,7 +71,6 @@
             };
             <!--获取csrftoken-->
             var csrftoken = getCookie('csrftoken');
-            console.log(csrftoken);
             //Ajax call
             function csrfSafeMethod(method) {
                 // these HTTP methods do not require CSRF protection

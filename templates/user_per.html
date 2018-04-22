@@ -8,27 +8,25 @@
       <div class="post-meta">• <time class="post-date" datetime="" title="">{{ user_per.posts.count }} posts | {{ user_per.followers.count|add:-1 }} followers | {{ user_per.followeds.count|add:-1 }} followeds</time>
       </div>
       <div>
-        {% if user_per.last_seen %}
-            <p><em>Last seen: {% right_date user_per.last_seen %}</em></p>
-        {% endif %}
+        <p><em>Signature: </em>{{ user_per.about_me }}</p>
       </div>
     </div>
   </div>
   <footer class="post-footer clearfix">
     <div class="pull-left tag-list">
       <div class="post-meta">
-        <span class="categories-meta fa-wrap">
-            <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}"><i class="fa fa-thumbs-up" id="imuser"></i></a>
-            <span class="tags-meta" id="thumbup_num">{{ user_per.thumbupeds.count }}</span>
-        </span>
-        <span class="fa-wrap">
-            <a href=""><i class="fa fa-thumbs-down"></i></a>
-            <span class="tags-meta">231</span>
-        </span>
-        <span class="fa-wrap">
-            <i class="fa fa-clock-o"></i>
-            <span class="date-meta">{{ user_per.username }}</span>
-        </span>
+          <span class="fa-wrap">
+              <a href="javascript:void(0)" onclick="return false;" title="最近登陆"><i class="fa fa-clock-o"></i></a>
+              <span class="date-meta">{% right_date user_per.last_seen %}</span>
+          </span>
+          <span class="fa-wrap">
+              <a href="javascript:void(0)" onclick="return false;" title="用户综合得分"><i class="fa fa-star"></i></a>
+              <span class="tags-meta">{% widthratio user_per.thumbupeds.count|add:user_per.posts.count|add:user_per.comments.count 1 user_per.followers.count %}</span>
+          </span>
+          <span class="categories-meta fa-wrap">
+              <a href="javascript:void(0)" onclick="return false;" name="{{ user_per.username }}" title="点赞"><i class="fa fa-thumbs-up" id="imuser"></i></a>
+              <span class="tags-meta" id="thumbup_num">{{ user_per.thumbupeds.count }}</span>
+          </span>
       </div>
     </div>
     <div class="post-permalink">

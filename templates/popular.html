@@ -13,7 +13,6 @@
                     var cookies = document.cookie.split(';');
                     for (var i = 0; i < cookies.length; i++) {
                         var cookie = jQuery.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want?
                         if (cookie.substring(0, name.length + 1) == (name + '=')) {
                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                             break;
@@ -25,11 +24,8 @@
 
             <!--获取csrftoken-->
             var csrftoken = getCookie('csrftoken');
-            console.log(csrftoken);
-
             //Ajax call
             function csrfSafeMethod(method) {
-                // these HTTP methods do not require CSRF protection
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             };
             $('button#follow').click(function (e) {
@@ -38,7 +34,6 @@
                 username = target.name;
                 var data = {
                     "username": username,
-                    {#                    "csrfmiddlewaretoken": "{{ csrf_token }}"#}
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -52,31 +47,19 @@
                 if (target.innerText == "Follow") {
                     $.ajax({
                         url: window.location.origin + "/follow/",
-                        // Access-Control-Allow-Origin: "http://192.168.151.249",
-                        // referer: "http://www.cloudjyk.me/",
-                        // "X-CSRFToken": "{{ csrf_token }}",
                         type: "post",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         async: false,
-                        // data: JSON.stringify(data),
                         data: JSON.stringify(data),
                         success: function (data, textStatus) {
                             alert(`You have followed ${username}`)
                             n = data.Data;
                             $('span[name=followeds]').text(n);
                             $(target).attr('class', 'btn btn-warning').text("Unfollow")
-                            // console.log(2, textStatus);
-                            // console.log(data);
-                            // console.log(data.Meta.RetCode)
-                            // console.log(data.Data);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            // console.log(XMLHttpRequest);
                             alert('Some error has occured, try again later')
-                            // console.log(XMLHttpRequest.status);
-                            // console.log(textStatus);
-                            // console.log(errorThrown);
                         }
                     });
                 }
@@ -130,30 +113,18 @@
                 });
                 $.ajax({
                     url: window.location.origin + "/thumbup/",
-                    // Access-Control-Allow-Origin: "http://192.168.151.249",
-                    // referer: "http://www.cloudjyk.me/",
-                    // "X-CSRFToken": "{{ csrf_token }}",
                     type: "post",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: false,
                     data: JSON.stringify(data),
-                    // data: data,
                     success: function (data, textStatus) {
                         alert('Thumbup recieved!');
                         var n = data.Data;
                         num.text(n);
-                        // console.log(2, textStatus);
-                        // console.log(data);
-                        // console.log(data.Meta.RetCode)
-                        // console.log(data.Data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // console.log(XMLHttpRequest);
                         alert('Some error has occured, try again later');
-                        // console.log(XMLHttpRequest.status);
-                        // console.log(textStatus);
-                        // console.log(errorThrown);
                     }
                 });
             });

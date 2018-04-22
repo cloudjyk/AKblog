@@ -13,7 +13,7 @@
                 <div class="post-meta">
                     <time class="post-date" datetime="" title="">
                         <p>
-                            • <span  id="post_num">{{ user.posts.count }}</span>posts | <span
+                            • <span id="post_num">{{ user.posts.count }}</span>posts | <span
                                 name="followers">{{ user.followers.count|add:-1 }}</span>followers | <span
                                 name="followeds">{{ user.followeds.count|add:-1 }}</span>followeds
                         </p>
@@ -21,25 +21,22 @@
                     </time>
                 </div>
             </div>
-            {% if user.last_seen %}
-                <p><em>Last seen: {% right_date user.last_seen %}</em></p>
-            {% endif %}
-
+            <p><em>Signature: </em>{{ user.about_me }}</p>
         </div>
         <footer class="post-footer clearfix">
             <div class="pull-left tag-list">
                 <div class="post-meta">
+                    <span class="fa-wrap">
+                        <a href="javascript:void(0)" onclick="return false;" title="最近登陆"><i class="fa fa-clock-o"></i></a>
+                        <span class="date-meta">{% right_date user.last_seen %}</span>
+                    </span>
+                    <span class="fa-wrap">
+                        <a href="javascript:void(0)" onclick="return false;" title="用户综合得分"><i class="fa fa-star"></i></a>
+                        <span class="tags-meta">{% widthratio user.thumbupeds.count|add:user.posts.count|add:user.comments.count 1 user.followers.count %}</span>
+                    </span>
                     <span class="categories-meta fa-wrap">
-                        <a href="javascript:void(0)" onclick="return false;" name="{{ user.username }}"><i class="fa fa-thumbs-up" id="imuser"></i></a>
+                        <a href="javascript:void(0)" onclick="return false;" name="{{ user.username }}" title="点赞"><i class="fa fa-thumbs-up" id="imuser"></i></a>
                         <span class="tags-meta" id="thumbup_num">{{ user.thumbupeds.count }}</span>
-                    </span>
-                    <span class="fa-wrap">
-                        <a href="javascript:void(0)" onclick="return false;" name="thumbup"><i class="fa fa-thumbs-down"></i></a>
-                        <span class="tags-meta">225</span>
-                    </span>
-                    <span class="fa-wrap">
-                        <i class="fa fa-clock-o"></i>
-                        <span class="date-meta">{{ user.username }}</span>
                     </span>
                 </div>
             </div>
@@ -77,7 +74,6 @@
             };
             <!--获取csrftoken-->
             var csrftoken = getCookie('csrftoken');
-            console.log(csrftoken);
             //Ajax call
             function csrfSafeMethod(method) {
                 // these HTTP methods do not require CSRF protection
