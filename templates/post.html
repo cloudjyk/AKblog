@@ -16,12 +16,12 @@
         <div class="pull-left tag-list">
             <div class="post-meta">
                 <span class="fa-wrap">
-                  <i class="fa fa-clock-o"></i>
-                  <span class="date-meta">{% right_date post.post_time %}</span>
+                    <a href="javascript:void(0)" onclick="return false;" title="发布时间"><i class="fa fa-clock-o"></i></a>
+                    <span class="date-meta">{% right_date post.post_time %}</span>
                 </span>
                 <span class="fa-wrap">
-                  <a href="javascript:void(0)" onclick="return false;" title="评论"><i class="fa fa-comment"></i></a>
-                  <span class="tags-meta" id="comment_num">{{ post.comments.count }}</span>
+                    <a href="javascript:void(0)" onclick="return false;" title="评论"><i class="fa fa-comment"></i></a>
+                    <span class="tags-meta" id="comment_num">{{ post.comments.count }}</span>
                 </span>
                 <span class="categories-meta fa-wrap">
                     <a href="javascript:void(0)" onclick="return false;" name="{{ post.id }}" title="点赞"><i class="fa fa-thumbs-up" id="impost"></i></a>

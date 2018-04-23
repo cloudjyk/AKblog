@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '467l1@oj^1+de%9(-h1yu9100&0helyl98#6$e(z743%4*q&m!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['cloudjyk.me', 'www.cloudjyk.me', '172.96.208.66']
 

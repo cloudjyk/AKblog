@@ -17,7 +17,6 @@
                                 name="followers">{{ user.followers.count|add:-1 }}</span>followers | <span
                                 name="followeds">{{ user.followeds.count|add:-1 }}</span>followeds
                         </p>
-
                     </time>
                 </div>
             </div>
@@ -45,9 +44,9 @@
                     <a href="{% url 'edit' %}" class="btn btn-default">edit my info</a>
                 {% else %}
                     {% if request.user in user.followers.all %}
-                        <a class="btn btn-default" name="follow">Unfollow</a>
+                        <button type="button" class="btn btn-warning" name="{{ user.username }}" id="follow">Unfollow</button>
                     {% else %}
-                        <a class="btn btn-default" name="follow">Follow</a>
+                        <button type="button" class="btn btn-success" name="{{ user.username }}" id="follow">Follow</button>
                     {% endif %}
                 {% endif %}
             </div>
@@ -85,6 +84,7 @@
                 username = target.name;
                 var data = {
                     "username": username,
+                    "title": "{{ title }}",
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -106,7 +106,7 @@
                         success: function (data, textStatus) {
                             alert(`You have followed ${username}`);
                             n = data.Data;
-                            $('span[name=followeds]').text(n);
+                            $('span[name=followers]').text(n);
                             $(target).attr('class', 'btn btn-warning').text("Unfollow")
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -125,7 +125,7 @@
                         success: function (data) {
                             alert(`You have unfollowed ${username}`);
                             n = data.Data;
-                            $('span[name=followeds]').text(n);
+                            $('span[name=followers]').text(n);
                             $(target).attr('class', 'btn btn-success').text("Follow");
                         },
                         error: function () {

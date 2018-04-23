@@ -5,7 +5,12 @@
   </div>
   <div class="post-content">
     <div class="post-head home-post-head"><h1 class="post-title"><a href="{% url 'user' user_per.username %}">{{user_per.username}}</a></h1>
-      <div class="post-meta">• <time class="post-date" datetime="" title="">{{ user_per.posts.count }} posts | {{ user_per.followers.count|add:-1 }} followers | {{ user_per.followeds.count|add:-1 }} followeds</time>
+      <div class="post-meta">
+          <time class="post-date" datetime="" title="">
+                • <span id="post_num">{{ user_per.posts.count }}</span>posts | <span
+                    name="followers">{{ user_per.followers.count|add:-1 }}</span>followers | <span
+                    name="followeds">{{ user_per.followeds.count|add:-1 }}</span>followeds
+          </time>
       </div>
       <div>
         <p><em>Signature: </em>{{ user_per.about_me }}</p>

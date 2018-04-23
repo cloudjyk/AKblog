@@ -130,7 +130,7 @@ def edit(request):
             if form.is_valid():
                 username = form.cleaned_data['username']
                 about_me = form.cleaned_data['about_me']
-                guser.about_me = username
+                guser.username = username
                 guser.about_me = about_me
                 guser.save()
             if request.FILES.get('avatar_file'):
@@ -200,7 +200,10 @@ def follow(request):
             user = User.objects.filter(username=req['username'])[0]
             user.followers.add(request.user)
             user.save()
-            res = request.user.followeds.count()-1
+            if not req.get('title'):
+                res = request.user.followeds.count()-1
+            else:
+                res = user.followers.count() - 1
             info['Meta'] = {'RetCode':200, 'Error':''}
             info['Data'] = res
         else:
@@ -225,7 +228,10 @@ def unfollow(request):
             user = User.objects.filter(username=req['username'])[0]
             user.followers.remove(request.user)
             user.save()
-            res = request.user.followeds.count()-1
+            if not req.get('title'):
+                res = request.user.followeds.count()-1
+            else:
+                res = user.followers.count() - 1
             info['Meta'] = {'RetCode':200, 'Error':''}
             info['Data'] = res
         else:

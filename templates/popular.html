@@ -31,9 +31,11 @@
             $('button#follow').click(function (e) {
                 var target = e.target;
                 console.log(target.innerText);
-                username = target.name;
+                var username = target.name;
+                var followers_num = $(target).parent().parent().parent().find('[name=followers]');
                 var data = {
                     "username": username,
+                    "title": "{{ title }}",
                 };
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -55,7 +57,7 @@
                         success: function (data, textStatus) {
                             alert(`You have followed ${username}`)
                             n = data.Data;
-                            $('span[name=followeds]').text(n);
+                            followers_num.text(n);
                             $(target).attr('class', 'btn btn-warning').text("Unfollow")
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -74,7 +76,7 @@
                         success: function (data) {
                             alert(`You have unfollowed ${username}`)
                             n = data.Data;
-                            $('span[name=followeds]').text(n);
+                            followers_num.text(n);
                             $(target).attr('class', 'btn btn-success').text("Follow")
                         },
                         error: function () {
